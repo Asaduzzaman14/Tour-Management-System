@@ -6,7 +6,6 @@ const { getAllTourServices, addTourServices, getATourServices, deleteToorService
 exports.getAllTour = async (req, res, next) => {
 
     try {
-        console.log(req.query);
         const queries = {}
 
         if (req.query.page) {
@@ -15,6 +14,24 @@ exports.getAllTour = async (req, res, next) => {
             query.skip = skip;
             query.limit = parseInt(limit)
 
+        };
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ')
+            queries.fields = fields;
+            console.log(fields);
+        }
+
+
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ')
+            queries.sortBy = sortBy;
+            console.log(sortBy);
+        }
+        if (req.query.page) {
+            const { page = 1, limit = 2 } = req.query;
+            const skip = (page - 1) * parseInt(limit)
+            queries.skip = skip;
+            queries.limit = parseInt(limit)
         }
 
         const tours = await getAllTourServices(queries)
@@ -155,14 +172,12 @@ exports.deleteTour = async (req, res, next) => {
 };
 
 
-
-
 exports.getCheapestTour = async (req, res, next) => {
 
     try {
-        const tours = await Tour.find({})
-            .sort({ price: +1 }) // projection
-            .limit({ limit: 2 })
+        const tours = await Tour.find()
+            .limit(3)
+            .sort({ price: +1 })
 
 
         res.status(200).json({

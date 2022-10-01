@@ -2,7 +2,8 @@ const Tour = require('../models/Tour');
 const { ObjectId } = require('mongodb');
 
 exports.getAllTourServices = async (queries) => {
-    const tour = await Tour.find({})
+    const tour = await Tour.find()
+        .select((queries.fields))
     return tour
 }
 exports.getATourServices = async (id) => {
