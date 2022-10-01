@@ -6,7 +6,7 @@ const { getAllTourServices, addTourServices, getATourServices, deleteToorService
 exports.getAllTour = async (req, res, next) => {
 
     try {
-
+        console.log(req.query);
         const queries = {}
 
         if (req.query.page) {
@@ -40,7 +40,8 @@ exports.getAllTour = async (req, res, next) => {
 exports.getATour = async (req, res, next) => {
 
     try {
-        const id = req.params;
+        const { id } = req.params;
+        console.log(id);
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ success: false, error: "ID is not valid" })
         }
@@ -71,7 +72,7 @@ exports.addTour = async (req, res, next) => {
 
         console.log(req.body);
         const result = await addTourServices(req.body)
-        result.logger()
+        // result.logger() /
 
         res.status(200).json({
             status: true,
@@ -96,8 +97,14 @@ exports.addTour = async (req, res, next) => {
 exports.updateTourById = async (req, res, next) => {
 
     try {
-        const id = req.params
-        const result = await Tour.updateOne({ _id: id }, { $inc: req.body }, { runValidates: true });
+        const { id } = req.params;
+        console.log(id, 'this is id');
+        const newData = req.body;
+        const result = await Tour.updateOne(
+            { _id: ObjectId(id) },
+            { $inc: newData },
+            { runValidates: true }
+        );
 
 
         res.status(200).json({
@@ -146,3 +153,30 @@ exports.deleteTour = async (req, res, next) => {
 
     }
 };
+
+
+
+
+exports.getCheapestTour = async (req, res, next) => {
+
+    try {
+        const tours = await Tour.find({})
+            .sort({ price: +1 }) // projection
+            .limit({ limit: 2 })
+
+
+        res.status(200).json({
+            status: true,
+            message: "Successfully get 3 cheapest Tour",
+            data: tours
+
+        })
+
+    } catch (error) {
+        res.status(400).json({
+            staus: false,
+            message: "cheapest Tours can't founded"
+        })
+    }
+
+}

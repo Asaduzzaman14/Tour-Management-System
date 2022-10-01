@@ -6,8 +6,9 @@ exports.getAllTourServices = async (queries) => {
     return tour
 }
 exports.getATourServices = async (id) => {
-
+    // console.log(id);
     const tour = await Tour.findOne({ _id: ObjectId(id) })
+    console.log(tour);
     return tour
 }
 
@@ -17,9 +18,11 @@ exports.addTourServices = async (data) => {
     return tour
 }
 
+
 exports.deleteToorService = async (id) => {
 
     const result = await Tour.deleteOne({ _id: ObjectId(id) })
-
     return result
 }
+
+

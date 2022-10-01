@@ -9,6 +9,9 @@ router.route("/")
     .get(tourController.getAllTour)
     .post(tourController.addTour)
 
+router.route("/cheapest")
+    .get(tourController.getCheapestTour)
+
 
 router.route("/:id")
     .patch(tourController.updateTourById)
