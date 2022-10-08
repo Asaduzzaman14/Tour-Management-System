@@ -1,9 +1,9 @@
-let count = 0;
-const viewCount = (req, res, next) => {
+const { updateTourViewCountByIdService } = require("../services/tour.services");
 
-    count++;
-    next()
-    console.log(count);
+exports.viewCount = async (req, res, next) => {
+    const { id } = req.params;
 
-}
-module.exports = viewCount
+    await updateTourViewCountByIdService(id);
+
+    next();
+};

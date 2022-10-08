@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
 const Tour = require('../models/Tour');
-const { getAllTourServices, addTourServices, getATourServices, deleteToorService } = require('../services/tour.services');
+const { getAllTourServices, addTourServices, getATourServices, deleteToorService, getTourTrendingService, updateTourService } = require('../services/tour.services');
 
 
 exports.getAllTour = async (req, res, next) => {
@@ -58,7 +58,6 @@ exports.getATour = async (req, res, next) => {
 
     try {
         const { id } = req.params;
-        console.log(id);
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ success: false, error: "ID is not valid" })
         }
@@ -87,9 +86,9 @@ exports.addTour = async (req, res, next) => {
 
     try {
 
-        console.log(req.body);
+        // console.log(req.body);
         const result = await addTourServices(req.body)
-        // result.logger() /
+        // result.logger()
 
         res.status(200).json({
             status: true,
@@ -115,13 +114,8 @@ exports.updateTourById = async (req, res, next) => {
 
     try {
         const { id } = req.params;
-        console.log(id, 'this is id');
-        const newData = req.body;
-        const result = await Tour.updateOne(
-            { _id: ObjectId(id) },
-            { $inc: newData },
-            { runValidates: true }
-        );
+
+        const result = await updateTourService(id, req.body)
 
 
         res.status(200).json({
@@ -195,3 +189,22 @@ exports.getCheapestTour = async (req, res, next) => {
     }
 
 }
+
+
+exports.getTourTrending = async (req, res) => {
+    try {
+        const tours = await getTourTrendingService();
+
+        res.status(200).json({
+            status: "Success",
+            message: `Top 3 viewed tour found`,
+            data: tours,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "Fail",
+            message: `Could not find top 3 viewed tour`,
+            error: error.message,
+        });
+    }
+};

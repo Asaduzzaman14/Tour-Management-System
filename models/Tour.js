@@ -1,50 +1,129 @@
-const { mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
-// SCHEMA > MODEL > QUERY 
+// Schema
+const tourSchema = mongoose.Schema(
+    {
+        image: {
+            type: String,
+            required: [
+                true,
+                "Please provide a image url for this tour. Only Provide the live image url",
+            ],
+        },
+        title: {
+            type: String,
+            required: [true, "Please provide a title for this tour"],
+            unique: [true, "Title must be unique"],
+            minLength: [5, "Title must be at least 5 characters long"],
+            maxLength: [200, "Title can not be longer than 100 characters"],
+        },
+        rating: {
+            type: Number,
+            required: [true, "Please provide a rating for this tour"],
+            min: [0, "Rating can not be negative"],
+            max: [5, "Rating can not be more than 5"],
+        },
+        views: {
+            type: Number,
+            required: [true, "Please provide number of views this tour got"],
+            min: [0, "Views can not be negative"],
+            validate: {
+                validator: (value) => {
+                    const isInteger = Number.isInteger(value);
 
-
-// Schema design
-const tourSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "please provide a name for this Tour"],
-        trim: true,
-        unique: [true, "Name Must be unique"],
-        minLength: [3, "Name must be at least 3 chearacters."],
+                    if (isInteger) return true;
+                    else return false;
+                },
+            },
+            message: "Views must be an integer",
+        },
+        price: {
+            type: Number,
+            required: [true, "Please provide a price for this tour"],
+            min: [0, "Price can not be negative"],
+        },
+        unit: {
+            type: String,
+            required: [true, "Please provide a unit for the price"],
+            enum: {
+                values: [
+                    "$",
+                    "USD",
+                    "€",
+                    "Euro",
+                    "৳",
+                    "BDT",
+                    "₹",
+                    "Rupee",
+                    "¥",
+                    "Yen",
+                    "₩",
+                    "Won",
+                ],
+                message:
+                    "Unit value can not be '{VALUE}', must be $, USD, €, Euro, ৳, BDT, ₹, Rupee, ¥, Yen, ₩, Won",
+            },
+        },
+        description: {
+            type: String,
+            required: [true, "Please provide a description for this tour"],
+        },
+        destinations: {
+            type: String,
+            required: [true, "Please provide destinations for this tour"],
+        },
+        ageRange: {
+            type: String,
+            required: [true, "Please provide explore's age range for this tour"],
+        },
+        regions: {
+            type: String,
+            required: [true, "Please provide the regions for this tour"],
+        },
+        travelStyle: {
+            type: String,
+            required: [
+                true,
+                "Please provide travel style for this tour. Ex: Group, Guided, Historical etc",
+            ],
+        },
+        operatedIn: {
+            type: String,
+            required: [
+                true,
+                "Please provide which language this tour is operated in",
+            ],
+            enum: {
+                values: [
+                    "Bengali",
+                    "Japanese",
+                    "Korean",
+                    "Thai",
+                    "Arabic",
+                    "Greek",
+                    "English",
+                    "Hindi",
+                    "Urdu",
+                    "Chinese",
+                    "German",
+                    "Spanish",
+                ],
+                message:
+                    "The language operated in can not be {VALUE}. Supported languages - Bengali, Japanese, Korean, Thai, Arabic, Greek, English, Hindi, Urdu, Chinese, German, Spanish ",
+            },
+        },
+        operator: {
+            type: String,
+            required: [
+                true,
+                "Please provide the company name which operates this tour",
+            ],
+        },
     },
-    // details: {
-    //     type: String,
-    //     required: true,
-    // },
-    price: {
-        type: Number,
-        required: true,
-        min: [0, "Price Can't be negative"],
-    },
+    { timestamps: true }
+);
 
-}, {
-    timestamps: true,
-});
-
-
-//mongoose middleware for saving data: pre/post
-
-// tourSchema.pre("save", function (next) {
-//     console.log("Before saving data");
-//     if (this.quantity == 0) {
-//         this.status = "out-of-stock"
-//     }
-//     next()
-// })
-
-tourSchema.methods.logger = function () {
-    console.log(`Data save for ${this.name}`);
-}
-
-
-// model
-
-const Tour = mongoose.model("tour", tourSchema)
-
+// Model
+const Tour = mongoose.model("Tour", tourSchema);
 
 module.exports = Tour;
