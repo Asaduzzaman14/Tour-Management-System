@@ -16,7 +16,7 @@ const port = process.env.local || 5000;
 
 
 //database connecton
-mongoose.connect(process.env.DATABASE_LOCAL).then(() => {
+mongoose.connect(process.env.DATABASE).then(() => {
     console.log("Database is connection is Succesfull".green.bold)
 })
 
